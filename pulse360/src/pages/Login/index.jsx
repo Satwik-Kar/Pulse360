@@ -1,4 +1,15 @@
+"use client"
+import {useState} from "react";
+
 const LoginPage = () => {
+    const [loginData,setLoginData] = useState({});
+
+
+
+
+    function handleChange(e) {
+        setLoginData({...loginData, [e.target.name]: e.target.value});
+    }
     return (
         <div className="flex min-h-screen w-full">
             {/* Left Section - Login Form */}
@@ -20,7 +31,7 @@ const LoginPage = () => {
                     {/* User ID Field */}
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-medium">User ID</label>
-                        <input
+                        <input onChange={handleChange} name="username"
                             type="text"
                             placeholder="Enter your user ID"
                             className="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 focus:outline-none"
@@ -30,7 +41,7 @@ const LoginPage = () => {
                     {/* Password Field */}
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-medium">Password</label>
-                        <input
+                        <input onChange={handleChange} name="password"
                             type="password"
                             placeholder="Enter your password"
                             className="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 focus:outline-none"

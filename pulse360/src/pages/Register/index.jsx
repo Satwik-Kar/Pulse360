@@ -1,4 +1,60 @@
+"use client"
+
+import {useState} from "react";
+
 const RegisterPage = () => {
+
+
+    const [registerData, setRegisterData] = useState({});
+
+    function handleChange(e) {
+        setRegisterData({...registerData, [e.target.name]: e.target.value});
+    }
+
+    const validateForm = (registerData) => {
+        const errors = [];
+
+        // Username validation (min 5 characters)
+        if (!registerData.username || registerData.username.length < 5) {
+            errors.username = "Username must be at least 5 characters long.";
+        }
+
+        // Email validation (basic pattern check)
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!registerData.email || !emailPattern.test(registerData.email)) {
+            errors.email = "Enter a valid email address.";
+        }
+
+        // Admin Key validation (required)
+        if (!registerData.adminKey) {
+            errors.adminKey = "Admin Key is required.";
+        }
+
+        // Password validation
+        const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!registerData.password || !passwordPattern.test(registerData.password)) {
+            errors.password = "Password must be at least 8 characters, include one uppercase letter, one number, and one special character.";
+        }
+
+        // Confirm password validation
+        if (registerData.confirmPassword !== registerData.password) {
+            errors.confirmPassword = "Passwords do not match.";
+        }
+
+        return errors;
+    };
+
+    function registerAccount(event) {
+        event.preventDefault()
+
+        let errors = validateForm(registerData);
+        if (Object.keys(errors).length > 0) {
+            console.log("Validation Errors:", errors);
+        } else {
+            console.log("Form is valid, proceed with registration.");
+        }
+    }
+
     return (
         <div className="flex min-h-screen w-full items-center justify-center bg-gray-100">
             <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
@@ -16,15 +72,15 @@ const RegisterPage = () => {
                 </p>
 
                 {/* Form Fields */}
-                <form>
+                <form onSubmit={registerAccount}>
                     {/* Username */}
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-medium">Username</label>
                         <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Enter username (min. 5 characters)"
-                                className="mt-1 w-full p-2 pl-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+                            <input onChange={handleChange} name="username" id="username"
+                                   type="text"
+                                   placeholder="Enter username (min. 5 characters)"
+                                   className="mt-1 w-full p-2 pl-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 focus:outline-none"
                             />
                             <span className="absolute left-3 top-3 text-gray-500">👤</span>
                         </div>
@@ -34,10 +90,10 @@ const RegisterPage = () => {
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-medium">Email address</label>
                         <div className="relative">
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                className="mt-1 w-full p-2 pl-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+                            <input onChange={handleChange} name="email" id="email"
+                                   type="email"
+                                   placeholder="Enter your email"
+                                   className="mt-1 w-full p-2 pl-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 focus:outline-none"
                             />
                             <span className="absolute left-3 top-3 text-gray-500">📧</span>
                         </div>
@@ -47,10 +103,10 @@ const RegisterPage = () => {
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-medium">Admin Key</label>
                         <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Enter admin key"
-                                className="mt-1 w-full p-2 pl-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+                            <input onChange={handleChange} name="adminKey" id="adminKey"
+                                   type="text"
+                                   placeholder="Enter admin key"
+                                   className="mt-1 w-full p-2 pl-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 focus:outline-none"
                             />
                             <span className="absolute left-3 top-3 text-gray-500">🔑</span>
                         </div>
@@ -60,10 +116,10 @@ const RegisterPage = () => {
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-medium">Password</label>
                         <div className="relative">
-                            <input
-                                type="password"
-                                placeholder="Enter password"
-                                className="mt-1 w-full p-2 pl-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+                            <input onChange={handleChange} name="password" id="password"
+                                   type="password"
+                                   placeholder="Enter password"
+                                   className="mt-1 w-full p-2 pl-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 focus:outline-none"
                             />
                             <span className="absolute left-3 top-3 text-gray-500">🔒</span>
                         </div>
@@ -79,10 +135,10 @@ const RegisterPage = () => {
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-medium">Confirm Password</label>
                         <div className="relative">
-                            <input
-                                type="password"
-                                placeholder="Confirm your password"
-                                className="mt-1 w-full p-2 pl-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+                            <input onChange={handleChange} name="confirmPassword" id="confirmPassword"
+                                   type="password"
+                                   placeholder="Confirm your password"
+                                   className="mt-1 w-full p-2 pl-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400 focus:outline-none"
                             />
                             <span className="absolute left-3 top-3 text-gray-500">🔒</span>
                         </div>
@@ -104,7 +160,8 @@ const RegisterPage = () => {
 
                     {/* Sign In Link */}
                     <p className="text-center text-sm text-gray-600 mt-4">
-                        Already have an account? <a href="#" className="text-indigo-600 hover:underline">Sign in here</a>
+                        Already have an account? <a href="#" className="text-indigo-600 hover:underline">Sign in
+                        here</a>
                     </p>
                 </form>
 
