@@ -1,57 +1,97 @@
-"use client"
+"use client";
 
-import {useState} from "react";
+import { useState } from "react";
 
 const RegisterPage = () => {
-
-
-    const [registerData, setRegisterData] = useState({});
+    const [registerData, setRegisterData] = useState({
+        username: "",
+        email: "",
+        adminKey: "",
+        password: "",
+        confirmPassword: "",
+    });
+    const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     function handleChange(e) {
-        setRegisterData({...registerData, [e.target.name]: e.target.value});
+        setRegisterData({ ...registerData, [e.target.name]: e.target.value });
     }
 
-    const validateForm = (registerData) => {
-        const errors = [];
+    const validateForm = (data) => {
+        const errors = {};
 
         // Username validation (min 5 characters)
-        if (!registerData.username || registerData.username.length < 5) {
+        if (!data.username || data.username.length < 5) {
             errors.username = "Username must be at least 5 characters long.";
         }
 
         // Email validation (basic pattern check)
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!registerData.email || !emailPattern.test(registerData.email)) {
+        if (!data.email || !emailPattern.test(data.email)) {
             errors.email = "Enter a valid email address.";
         }
 
         // Admin Key validation (required)
-        if (!registerData.adminKey) {
+        if (!data.adminKey) {
             errors.adminKey = "Admin Key is required.";
         }
 
         // Password validation
         const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        if (!registerData.password || !passwordPattern.test(registerData.password)) {
+        if (!data.password || !passwordPattern.test(data.password)) {
             errors.password = "Password must be at least 8 characters, include one uppercase letter, one number, and one special character.";
         }
 
         // Confirm password validation
-        if (registerData.confirmPassword !== registerData.password) {
+        if (data.confirmPassword !== data.password) {
             errors.confirmPassword = "Passwords do not match.";
         }
 
         return errors;
     };
 
-    function registerAccount(event) {
-        event.preventDefault()
+    async function registerAccount(event) {
+        event.preventDefault();
+        setErrors({});
+        setSuccessMessage("");
+        setErrorMessage("");
 
-        let errors = validateForm(registerData);
-        if (Object.keys(errors).length > 0) {
-            console.log("Validation Errors:", errors);
-        } else {
-            console.log("Form is valid, proceed with registration.");
+        const validationErrors = validateForm(registerData);
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        setLoading(true);
+        try {
+            // Replace with your API endpoint
+            const response = await fetch("/api/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(registerData),
+            });
+
+            if (!response.ok) {
+                throw new Error("Registration failed. Please try again.");
+            }
+
+            const result = await response.json();
+            setSuccessMessage("Registration successful! Please check your email for confirmation.");
+            setRegisterData({
+                username: "",
+                email: "",
+                adminKey: "",
+                password: "",
+                confirmPassword: "",
+            });
+        } catch (error) {
+            setErrorMessage(error.message);
+        } finally {
+            setLoading(false);
         }
     }
 
